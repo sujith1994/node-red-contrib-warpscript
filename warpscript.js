@@ -36,6 +36,7 @@ module.exports = function(RED) {
             //
 
             console.log("testting the code");
+            console.log(msg)
 
             let postData = '{ ';
 
