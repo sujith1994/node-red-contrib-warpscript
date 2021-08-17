@@ -75,6 +75,9 @@ module.exports = function(RED) {
                         //
                         // parse the JSON returned by Warp 10™ and reverse it so the most recent element is last
                         //
+
+                        console.log('data after call');
+                        console.log(data);
                         try {
 
                             const json = JSON.parse(data).reverse();
