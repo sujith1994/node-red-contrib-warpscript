@@ -36,18 +36,29 @@ module.exports = function(RED) {
             //
 
             console.log("testting the code");
-            console.log(msg)
+            //            console.log(msg);
 
             let postData = '{ ';
 
             for (let key in msg) {
-                const parsed = parse(msg[key]);
-                if (undefined !== parsed) {
-                    postData += ` '${key.toString()}' ${parsed}`;
+
+                if (key === "_msgid") {
+                    const parsed = parse(msg[key]);
+                    if (undefined !== parsed) {
+                        postData += ` '${key.toString()}' ${parsed}`;
+                    }
+                } else if (key === "payload") {
+
+                    const parsed = parse(msg[key]);
+                    if (undefined !== parsed) {
+                        postData += ` '${key.toString()}' ${parsed}`;
+                    }
                 }
             }
+            console.log(msg.script);
 
-            postData += '}\n' + this.warpscript;
+            postData += '}\n' + msg.script;
+            console.log(postData);
 
             const opts = urllib.parse(this.warpurl);
             const post_options = {
@@ -75,28 +86,33 @@ module.exports = function(RED) {
                         //
                         // parse the JSON returned by Warp 10™ and reverse it so the most recent element is last
                         //
-
-                        console.log('data after call');
-                        console.log(data);
                         try {
 
                             const json = JSON.parse(data).reverse();
+                            //console.log(json);
                             const output = [];
+                            //msg = {}
+                            msg.payload = json;
+                            output.push(msg);
 
-                            json.forEach(message => {
-                                if (Array.isArray(message)) {
-                                    output.push(message);
-                                } else if (typeof message == 'object') {
-                                    output.push(message);
-                                } else {
-                                    //
-                                    // Wrap the element in an object
-                                    //
-                                    msg = {};
-                                    msg.payload = message;
-                                    output.push(msg);
-                                }
-                            });
+
+                            //json.forEach(message => {
+                            // if (Array.isArray(message)) {
+                            //      console.log("call is in array")
+                            //  output.push(message);
+                            // } else if (typeof message == 'object') {
+                            //      console.log("call is in object");
+                            //  output.push(message);
+                            // } else {
+                            //
+                            // Wrap the element in an object
+                            //
+                            //   msg = {};
+                            // msg.payload = message;
+                            //output.push(msg);
+                            //output.push(message);
+                            // }
+                            //});
 
                             //
                             // Emit the output messages
